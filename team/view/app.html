@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+</head>
+
+<body>
+
+
+    <from>
+        <!-- <input id="file" type="file"/> -->
+        <span>文件上传</span>
+        <input type="file" name="singleFile">
+        <input type="submit" id="submit" value="上传">
+    </from>
+
+    <hr>
+    <from>
+        <span>多文件上传</span>
+        <input type="file" name="fileList" multiple>
+        <input type="submit" id="listSubmit" value="上传">
+    </from>
+
+    <script>
+        let url = 'http://127.0.0.1:4000/'
+        
+        
+        $('#submit').on('click', function (e) {
+            let data = $('input[name=singleFile]')[0].files;
+            if (data) {
+                let formData = new FormData();
+                console.log(data);
+                formData.append('singleFile', data[0]);
+                console.log(formData);
+                $.ajax(url+"upload", {
+                    method: 'POST',
+                    data: formData,
+                    processData:false,
+                    contentType:false,
+                    success(data) {
+                        alert(data.desc);
+                        $('input[name=singleFile]').val("");
+                    }
+                })
+            } else {
+                alert("请选择好文件再提交");
+            }
+            e.preventDefault();
+        });
+    
+        $('#listSubmit').on('click',function(e){
+            let filelist = $("input[name=fileList]")[0].files;
+            console.info(filelist); 
+            if(filelist){
+                var fromData = new FormData();
+                for (const file of filelist) {
+                    console.info(file);
+                    fromData.append("fileList",file);
+                }
+                console.info(fromData);
+                $.ajax(url+"mput",{
+                    method:"POST",
+                    data:fromData,
+                    processData:false,
+                    contentType:false,
+                    success(data) {
+                        // alert("上传成功");
+                        console.log(data.desc);
+                        alert(data.desc);
+                        $("input[name=fileList]").val("");
+                    }
+                })
+            }else {
+                alert("请选择好文件再提交");
+            }
+            e.preventDefault();
+        });
+    </script>
+
+</body>
+
+</html>
